@@ -1,0 +1,81 @@
+---
+id: "OrderFulfillment"
+name: "Order Fulfillment Flow"
+version: "0.0.1"
+summary: "Flow for handling order processing from submission to shipment"
+
+steps:
+  - id: "order_placed"
+    title: "User Places Order"
+    summary: "The user places an order through the frontend"
+    actor:
+      name: "User"
+    next_step:
+      id: "order_submitted_event"
+      label: "Submit Order"
+
+  - id: "order_submitted_event"
+    title: "OrderSubmitted"
+    message:
+      id: "OrderSubmitted"
+      version: "0.0.1"
+    next_step:
+      id: "order_service"
+      label: "Start saga and move to Submitted state"
+
+  - id: "order_service"
+    title: "Order Service"
+    service:
+      id: "OrderService"
+      version: "1.0.0"
+    next_steps:
+      - id: "payment_completed_event"
+        label: "Wait for PaymentCompleted"
+      - id: "order_state_machine"
+        label: "Track order saga state"
+
+  - id: "payment_completed_event"
+    title: "PaymentCompleted"
+    message:
+      id: "PaymentCompleted"
+      version: "0.0.1"
+    next_step:
+      id: "order_service_paid"
+      label: "Transition to Paid state"
+
+  - id: "order_service_paid"
+    title: "Order Service (Paid)"
+    service:
+      id: "OrderService"
+      version: "1.0.0"
+    next_step:
+      id: "order_shipped_event"
+      label: "Wait for OrderShipped"
+
+  - id: "order_shipped_event"
+    title: "OrderShipped"
+    message:
+      id: "OrderShipped"
+      version: "0.0.1"
+    next_step:
+      id: "order_completed"
+      label: "Transition to Completed"
+
+  - id: "order_completed"
+    title: "Order Completed"
+    summary: "The order saga has completed successfully"
+
+  - id: "order_state_machine"
+    title: "OrderSaga State Machine"
+    summary: "Visual representation of the saga orchestration"
+    diagram:
+      type: "mermaid"
+      value: |
+        stateDiagram-v2
+            [*] --> Submitted : OrderSubmitted
+            Submitted --> Paid : PaymentCompleted
+            Paid --> Completed : OrderShipped
+---
+
+
+<NodeGraph />

@@ -1,0 +1,40 @@
+---
+id: OrderSubmitted
+name: Order is submitted
+version: 0.0.1
+summary: |
+  Indicates that a new order was submitted
+owners:
+    - ggeorgopoulos
+channels:
+  - id: order.{env}.events
+badges:
+    - content: Recently updated!
+      backgroundColor: green
+      textColor: green
+    - content: Channel:Azure Service Bus
+      backgroundColor: yellow
+      textColor: yellow
+---
+
+import Footer from '@catalog/components/footer.astro';
+
+## Overview
+
+This event starts the order submitted saga 
+
+```mermaid
+flowchart TB;  
+    0(["Initial"]) --> 4["OrderSubmittedEvent«OrderSubmitted»"];  
+    1(["Submitted"]) --> 5["PaymentCompletedEvent«PaymentCompleted»"];  
+    2(["Paid"]) --> 6["OrderShippedEvent«OrderShipped»"];  
+    4["OrderSubmittedEvent«OrderSubmitted»"] --> 1(["Submitted"]);  
+    5["PaymentCompletedEvent«PaymentCompleted»"] --> 2(["Paid"]);  
+    6["OrderShippedEvent«OrderShipped»"] --> 3(["Completed"]);
+```
+
+
+<NodeGraph />
+
+
+<Footer />
